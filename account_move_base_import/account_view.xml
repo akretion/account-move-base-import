@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+   <record id="account_journal_view_form" model="ir.ui.view">
+         <field name="model">account.journal</field>
+         <field name="inherit_id" ref="account.view_account_journal_form" />
+         <field eval="20" name="priority"/>
+         <field name="arch" type="xml">
+            <xpath expr="//page[@string='Cash Registers']"
+                position="after">
+                <page string="Import move">
+                    <group>
+                        <group string="import setting">
+                            <field name="import_ok"/>
+                            <field name="import_type"
+                                attrs="{'required':
+                                    [('import_ok', '=',True)]}"/>
+                            <field name="import_parser"
+                                attrs="{'required':
+                                    [('import_ok', '=',True)]}"/>
+                        </group>
+                        <group string="Miscellaneous">
+                            <field name="import_balance_check" />
+                        </group>
+                    </group>
+                </page>
+             </xpath>
+         </field>
+     </record>
+
+</data>
+</openerp>
