@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-#
-#    Copyright Camptocamp SA
+#    account_move_base_import module for Odoo
+#    Copyright (C) 2014-2016 Akretion (http://www.akretion.com)
+#    @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+#    @author Sébastien BEAU <sebastien.beau@akretion.com>
+#    code factoring from account_statement_base_import of Camptocamp SA
 #    Author Nicolas Bessi, Joel Grand-Guillaume
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,11 +20,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp.tools.translate import _
+from openerp import _
 from openerp.osv.orm import except_orm
 import tempfile
 import datetime
-from .parser import BankStatementImportParser
+from .parser import AccountMoveImportParser
 from .parser import UnicodeDictReader
 try:
     import xlrd
@@ -32,10 +35,10 @@ except:
 def float_or_zero(val):
     """ Conversion function used to manage
     empty string into float usecase"""
-    return float(val) if val else 0.0
+    return float(val.replace(',', '.')) if val else 0.0
 
 
-class FileParser(BankStatementImportParser):
+class FileParser(AccountMoveImportParser):
     """Generic abstract class for defining parser for .csv, .xls or .xlsx file
     format.
     """

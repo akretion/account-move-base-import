@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-#
-#    Copyright Camptocamp SA
-#    Author Joel Grand-Guillaume
+#    account_move_base_import module for Odoo
+#    Copyright (C) 2014-2016 Akretion (http://www.akretion.com)
+#    @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+#    @author Sébastien BEAU <sebastien.beau@akretion.com>
+#    code factoring from account_statement_base_import of Camptocamp SA
+#    Author Nicolas Bessi, Joel Grand-Guillaume
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -20,15 +23,13 @@
 
 import datetime
 from .file_parser import FileParser
-from openerp.addons.account_statement_base_import.parser.file_parser import (
-    float_or_zero
-)
+from file_parser import float_or_zero
 from openerp.tools import ustr
 
 
 class GenericFileParser(FileParser):
     """Standard parser that use a define format in csv or xls to import into a
-    bank statement. This is mostely an example of how to proceed to create a
+    account move. This is mostely an example of how to proceed to create a
     new parser, but will also be useful as it allow to import a basic flat
     file.
     """
@@ -36,10 +37,12 @@ class GenericFileParser(FileParser):
     def __init__(self, parse_name, ftype='csv', **kwargs):
         conversion_dict = {
             'ref': ustr,
-            'label': ustr,
+            'name': ustr,
             'date': datetime.datetime,
-            'amount': float_or_zero,
-        }
+            'debit': float_or_zero,
+            'credit': float_or_zero,
+            'account_id': ustr,
+            }
         super(GenericFileParser, self).__init__(
             parse_name, ftype=ftype,
             extra_fields=conversion_dict,
@@ -47,33 +50,34 @@ class GenericFileParser(FileParser):
 
     @classmethod
     def parser_for(cls, parser_name):
-        """Used by the new_bank_statement_parser class factory. Return true if
-        the providen name is generic_csvxls_so
+        """Used by the new_account_move_parser class factory. Return true if
+        the providen name is generic_csvxls
         """
-        return parser_name == 'generic_csvxls_so'
+        return parser_name == 'generic_csvxls'
 
     def get_st_line_vals(self, line, *args, **kwargs):
         """
         This method must return a dict of vals that can be passed to create
-        method of statement line in order to record it. It is the
+        method of account move line in order to record it. It is the
         responsibility of every parser to give this dict of vals, so each one
         can implement his own way of recording the lines.
             :param:  line: a dict of vals that represent a line of
               result_row_list
             :return: dict of values to give to the create method of statement
               line, it MUST contain at least:
-                {
-                    'name':value,
-                    'date':value,
-                    'amount':value,
-                    'ref':value,
-                    'label':value,
+                {  'ref': value,
+                    'name': value,
+                    'date': value,
+                    'debit': value,
+                    'credit': value,
+                    'account_id': value,
                 }
         """
         return {
-            'name': line.get('label', line.get('ref', '/')),
-            'date': line.get('date', datetime.datetime.now().date()),
-            'amount': line.get('amount', 0.0),
             'ref': line.get('ref', '/'),
-            'label': line.get('label', ''),
+            'name': line.get('name', line.get('ref', '/')),
+            'date': line.get('date', datetime.datetime.now().date()),
+            'debit': line.get('debit', 0.0),
+            'debit': line.get('debit', 0.0),
+            'account_id': line.get('account_id', ''),
         }
