@@ -73,7 +73,7 @@ class AccountJournal(models.Model):
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    def prepare_move_lines_vals(self, parser_vals, move_id):
+    def prepare_move_lines_vals(self, parser_vals, move_id, journal_id):
         """Hook to build the values of a line from the parser returned values.
         At least it fullfill the move_id. Overide it to add your own
         completion if needed.
@@ -87,18 +87,19 @@ class AccountMove(models.Model):
         move_line_obj = self.env['account.move.line']
         values = parser_vals
         values['move_id'] = move_id
+        values['journal_id'] = journal_id
         date = values.get('date')
         period_memoizer = self._context.get('period_memoizer') or {}
         if period_memoizer.get(date):
             values['period_id'] = period_memoizer[date]
         else:
             periods = self.env['account.period'].find(dt=values.get('date'))
-            values['period_id'] = periods and periods[0] or False
-            period_memoizer[date] = periods and periods[0] or False
+            values['period_id'] = periods and periods[0].id or False
+            period_memoizer[date] = periods and periods[0].id or False
         values = move_line_obj._add_missing_default_values(values)
         return values
 
-    def prepare_move_vals(self, result_row_list, parser, journal_id):
+    def prepare_move_vals(self, journal_id, result_row_list, parser):
         """Hook to build the values of the move from the parser and
         the journal.
         """
@@ -120,6 +121,7 @@ class AccountMove(models.Model):
                 _("No acount journal!"),
                 _("You must provide a valid acount journal to import an "
                   "account move!"))
+        import pdb; pdb.set_trace()
         parser = new_account_move_parser(journal_id, ftype=ftype)
         res = []
         for result_rowjournal_obj_list in parser.parse(file_stream):
@@ -163,7 +165,8 @@ class AccountMove(models.Model):
             move_store = []
             for line in result_row_list:
                 parser_vals = parser.get_st_line_vals(line)
-                values = self.prepare_move_lines_vals(parser_vals, move_id)
+                values = self.prepare_move_lines_vals(
+                    parser_vals, move_id.id, journal_id.id)
                 move_store.append(values)
             # Hack to bypass ORM poor perfomance....
             move_line_obj._insert_lines(move_store)
@@ -203,6 +206,27 @@ class AccountMove(models.Model):
 
 class AccountMoveline(models.Model):
     _inherit = "account.move.line"
+
+    def _get_available_columns(self, move_store,
+                               include_serializable=False):
+        """Return writeable by SQL columns"""
+        move_line_obj = self.env['account.move.line']
+        model_cols = move_line_obj._columns
+        import pdb; pdb.set_trace()
+        avail = [
+            k for k, col in model_cols.iteritems()
+        ]
+        keys = [k for k in move_store[0].keys() if k in avail]
+        # TODO manage sparse fields if exists..
+        # if include_serializable:
+        #     for k, col in model_cols.iteritems():
+        #         if k in move_store[0].keys() and \
+        #                 isinstance(col, fields.sparse) and \
+        #                 col.serialization_field not in keys and \
+        #                 col._type == 'char':
+        #             keys.append(col.serialization_field)
+        keys.sort()
+        return keys
 
     def _prepare_insert(self, move, cols):
         """ Apply column formating to prepare data for SQL inserting
@@ -252,7 +276,7 @@ class AccountMoveline(models.Model):
             when doing batch write. It is a shame that batch function
             does not exist"""
         move_line_obj = self.env['account.move.line']
-        move_line_obj.check_access_rule([], 'create')
+        move_line_obj.check_access_rule('create')
         move_line_obj.check_access_rights('create', raise_exception=True)
         cols = self._get_available_columns(
             move_store, include_serializable=True)
@@ -260,9 +284,11 @@ class AccountMoveline(models.Model):
         tmp_vals = (', '.join(cols), ', '.join(['%%(%s)s' % i for i in cols]))
         sql = "INSERT INTO account_move_line (%s) " \
               "VALUES (%s);" % tmp_vals
+        import pdb; pdb.set_trace()
         try:
-            self._cr.executemany(
-                sql, tuple(self._serialize_sparse_fields(cols, move_store)))
+            self._cr.executemany(sql, tuple(move_store))
+            # TODO handle serialized fields
+            # sql, tuple(self._serialize_sparse_fields(cols, move_store)))
         except psycopg2.Error as sql_err:
             self._cr.rollback()
             raise except_orm(_("ORM bypass error"), sql_err.pgerror)

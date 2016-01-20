@@ -78,6 +78,6 @@ class GenericFileParser(FileParser):
             'name': line.get('name', line.get('ref', '/')),
             'date': line.get('date', datetime.datetime.now().date()),
             'debit': line.get('debit', 0.0),
-            'debit': line.get('debit', 0.0),
+            'credit': line.get('credit', 0.0),
             'account_id': line.get('account_id', ''),
         }
