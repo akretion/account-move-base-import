@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-#
-#    Author: Joel Grand-Guillaume
-#    Copyright 2011-2012 Camptocamp SA
-#
+#    account_move_base_import module for Odoo
+#    Copyright (C) 2014-2016 Akretion (http://www.akretion.com)
+#    @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+#    @author Sébastien BEAU <sebastien.beau@akretion.com>
+#    code factoring from account_statement_base_import of Camptocamp SA
+#    Author Nicolas Bessi, Joel Grand-Guillaume
 #    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
+#    GNU General Public License for more details.
 #
-#    You should have received a copy of the GNU Affero General Public License
+#    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 import base64
 import csv
 from datetime import datetime
-from openerp.tools.translate import _
+from openerp import _
 
 
 def UnicodeDictReader(utf8_data, **kwargs):
@@ -41,35 +43,32 @@ def UnicodeDictReader(utf8_data, **kwargs):
                     for key, value in row.iteritems()])
 
 
-class BankStatementImportParser(object):
+class AccountMoveImportParser(object):
 
     """
     Generic abstract class for defining parser for different files and
-    format to import in a bank statement. Inherit from it to create your
+    format to import in an account move. Inherit from it to create your
     own. If your file is a .csv or .xls format, you should consider inheirt
     from the FileParser instead.
     """
 
-    def __init__(self, profile, *args, **kwargs):
+    def __init__(self, journal, *args, **kwargs):
         # The name of the parser as it will be called
-        self.parser_name = profile.import_type
+        self.parser_name = journal.import_parser
         # The result as a list of row. One row per line of data in the file,
-        # but not the commission one!
         self.result_row_list = None
         # The file buffer on which to work on
         self.filebuffer = None
-        # The profile record to access its parameters in any parser method
-        self.profile = profile
-        self.balance_start = None
-        self.balance_end = None
-        self.statement_name = None
-        self.statement_date = None
-        self.support_multi_statements = False
+        # The journal record to access its parameters in any parser method
+        self.journal = journal
+        self.move_name = None
+        self.move_date = None
+        self.support_multi_moves = False
 
     @classmethod
     def parser_for(cls, parser_name):
         """Override this method for every new parser, so that
-        new_bank_statement_parser can return the good class from his name.
+        new_account_move_parser can return the good class from his name.
         """
         return False
 
@@ -107,44 +106,43 @@ class BankStatementImportParser(object):
         return NotImplementedError
 
     def _validate(self, *args, **kwargs):
-        """Implement a method in your parser  to validate the
+        """Implement a method in your parser to validate the
         self.result_row_list instance property and raise an error if not valid.
         """
         return NotImplementedError
 
     def _post(self, *args, **kwargs):
         """Implement a method in your parser to make some last changes on the
-        result of parsing the datas, like converting dates, computing
-        commission, ...
+        result of parsing the datas, like converting dates, ...
         """
         return NotImplementedError
 
     def get_st_vals(self):
-        """This method return a dict of vals that ca be passed to create method
-        of statement.
-        :return: dict of vals that represent additional infos for the statement
+        """This method return a dict of vals that ca be passed to create an
+        account move.
+        :return: dict of vals that represent additional infos for the move
         """
         return {
-            'name': self.statement_name or '/',
-            'balance_start': self.balance_start,
-            'balance_end_real': self.balance_end,
-            'date': self.statement_date or datetime.now()
+            'name': self.move_name or '/',
+            'date': self.move_date or datetime.now()
         }
 
     def get_st_line_vals(self, line, *args, **kwargs):
         """Implement a method in your parser that must return a dict of vals
-        that can be passed to create method of statement line in order to
+        that can be passed to the create method of an acount move line in order to
         record it. It is the responsibility of every parser to give this dict
         of vals, so each one can implement his own way of recording the lines.
 
         :param:  line: a dict of vals that represent a line of result_row_list
-        :return: dict of values to give to the create method of statement line,
+        :return: dict of values to give to the create method of an acount
+        move line,
           it MUST contain at least:
-            {
-                'name':value,
-                'date':value,
-                'amount':value,
-                'ref':value,
+            {  'ref': value,
+                'name': value,
+                'date': value,
+                'debit': value,
+                'credit': value,
+                'account_id': value,
             }
         """
         return NotImplementedError
@@ -157,7 +155,7 @@ class BankStatementImportParser(object):
              [] of rows as {'key':value}
 
         Note: The row_list must contain only value that are present in the
-        account.bank.statement.line object !!!
+        account.move.line object !!!
         """
         if filebuffer:
             self.filebuffer = filebuffer
@@ -165,7 +163,7 @@ class BankStatementImportParser(object):
             raise Exception(_('No buffer file given.'))
         self._format(*args, **kwargs)
         self._pre(*args, **kwargs)
-        if self.support_multi_statements:
+        if self.support_multi_moves:
             while self._parse(*args, **kwargs):
                 self._validate(*args, **kwargs)
                 self._post(*args, **kwargs)
@@ -218,13 +216,14 @@ def itersubclasses(cls, _seen=None):
                 yield sub
 
 
-def new_bank_statement_parser(profile, *args, **kwargs):
-    """Return an instance of the good parser class based on the given profile.
+def new_account_move_parser(journal, *args, **kwargs):
+    """Return an instance of the good parser class based on the given journal.
 
-    :param profile: browse_record of import profile.
-    :return: class instance for given profile import type.
+    :param journal: browse_record of import journal.
+    :return: class instance for given journal import parser.
     """
-    for cls in itersubclasses(BankStatementImportParser):
-        if cls.parser_for(profile.import_type):
-            return cls(profile, *args, **kwargs)
+    import pdb; pdb.set_trace()
+    for cls in itersubclasses(AccountMoveImportParser):
+        if cls.parser_for(journal.import_parser):
+            return cls(journal, *args, **kwargs)
     raise ValueError
