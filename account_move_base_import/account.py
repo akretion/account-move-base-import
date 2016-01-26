@@ -79,15 +79,26 @@ class AccountMove(models.Model):
         completion if needed.
 
         :param dict of vals from parser for account.move.line
-          (called by parser.get_st_line_vals)
+          (called by parser.get_mv_line_vals)
         :param int/long move_id: ID of the concerned account.move
         :return: dict of vals that will be passed to create method of
           move line.
         """
         move_line_obj = self.env['account.move.line']
+        act_obj = self.env['account.account']
         values = parser_vals
         values['move_id'] = move_id
         values['journal_id'] = journal_id
+        if values.get('account_id', False):
+            act_code = values.get('account_id')
+            acts = act_obj.search([('code', '=', act_code)])
+            if acts:
+                values['account_id'] = acts[0].id
+            else:
+                raise except_orm(
+                            _('Invalid data'),
+                            _("There is no account with code %s.") %
+                            (act_code))
         date = values.get('date')
         period_memoizer = self._context.get('period_memoizer') or {}
         if period_memoizer.get(date):
@@ -104,7 +115,7 @@ class AccountMove(models.Model):
         the journal.
         """
         vals = {'journal_id': journal_id}
-        vals.update(parser.get_st_vals())
+        vals.update(parser.get_mv_vals())
         return vals
 
     def multi_move_import(self, journal_id, file_stream, ftype="csv"):
@@ -121,7 +132,6 @@ class AccountMove(models.Model):
                 _("No acount journal!"),
                 _("You must provide a valid acount journal to import an "
                   "account move!"))
-        import pdb; pdb.set_trace()
         parser = new_account_move_parser(journal_id, ftype=ftype)
         res = []
         for result_rowjournal_obj_list in parser.parse(file_stream):
@@ -150,7 +160,7 @@ class AccountMove(models.Model):
         # Check all key are present in account.move.line!!
         if not result_row_list:
             raise except_orm(_("Nothing to import"), _("The file is empty"))
-        parsed_cols = parser.get_st_line_vals(result_row_list[0]).keys()
+        parsed_cols = parser.get_mv_line_vals(result_row_list[0]).keys()
         for col in parsed_cols:
             if col not in move_line_obj._columns:
                 raise except_orm(
@@ -164,14 +174,15 @@ class AccountMove(models.Model):
             # Record every line in the account move
             move_store = []
             for line in result_row_list:
-                parser_vals = parser.get_st_line_vals(line)
+                parser_vals = parser.get_mv_line_vals(line)
                 values = self.prepare_move_lines_vals(
                     parser_vals, move_id.id, journal_id.id)
                 move_store.append(values)
             # Hack to bypass ORM poor perfomance....
             move_line_obj._insert_lines(move_store)
-            self._write_extra_move_lines(
-                parser, result_row_list, journal_id, move_id)
+            # TODO add method to wirite extra line : ex countrpart move line
+            # self._write_extra_move_lines(
+            #     parser, result_row_list, journal_id, move_id)
             attachment_data = {
                 'name': 'move file',
                 'datas': file_stream,
@@ -186,9 +197,9 @@ class AccountMove(models.Model):
             # if journal_id.launch_import_completion:
             #     move_obj.button_auto_completion([move_id])
             # Write the needed log infos on profile
-            self.write_logs_after_import(journal_id.id,
-                                         move_id,
-                                         len(result_row_list))
+            # self.write_logs_after_import(journal_id.id,
+            #                              move_id,
+            #                              len(result_row_list))
         except Exception:
             error_type, error_value, trbk = sys.exc_info()
             st = "Error: %s\nDescription: %s\nTraceback:" % (
@@ -212,7 +223,6 @@ class AccountMoveline(models.Model):
         """Return writeable by SQL columns"""
         move_line_obj = self.env['account.move.line']
         model_cols = move_line_obj._columns
-        import pdb; pdb.set_trace()
         avail = [
             k for k, col in model_cols.iteritems()
         ]
@@ -284,7 +294,6 @@ class AccountMoveline(models.Model):
         tmp_vals = (', '.join(cols), ', '.join(['%%(%s)s' % i for i in cols]))
         sql = "INSERT INTO account_move_line (%s) " \
               "VALUES (%s);" % tmp_vals
-        import pdb; pdb.set_trace()
         try:
             self._cr.executemany(sql, tuple(move_store))
             # TODO handle serialized fields

@@ -23,7 +23,7 @@
 
 import datetime
 from .file_parser import FileParser
-from file_parser import float_or_zero
+from .file_parser import float_or_zero
 from openerp.tools import ustr
 
 
@@ -55,7 +55,7 @@ class GenericFileParser(FileParser):
         """
         return parser_name == 'generic_csvxls'
 
-    def get_st_line_vals(self, line, *args, **kwargs):
+    def get_mv_line_vals(self, line, *args, **kwargs):
         """
         This method must return a dict of vals that can be passed to create
         method of account move line in order to record it. It is the

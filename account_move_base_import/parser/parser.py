@@ -117,7 +117,7 @@ class AccountMoveImportParser(object):
         """
         return NotImplementedError
 
-    def get_st_vals(self):
+    def get_mv_vals(self):
         """This method return a dict of vals that ca be passed to create an
         account move.
         :return: dict of vals that represent additional infos for the move
@@ -127,7 +127,7 @@ class AccountMoveImportParser(object):
             'date': self.move_date or datetime.now()
         }
 
-    def get_st_line_vals(self, line, *args, **kwargs):
+    def get_mv_line_vals(self, line, *args, **kwargs):
         """Implement a method in your parser that must return a dict of vals
         that can be passed to the create method of an acount move line in order to
         record it. It is the responsibility of every parser to give this dict
@@ -222,7 +222,7 @@ def new_account_move_parser(journal, *args, **kwargs):
     :param journal: browse_record of import journal.
     :return: class instance for given journal import parser.
     """
-    import pdb; pdb.set_trace()
+
     for cls in itersubclasses(AccountMoveImportParser):
         if cls.parser_for(journal.import_parser):
             return cls(journal, *args, **kwargs)
