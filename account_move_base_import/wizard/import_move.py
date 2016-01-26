@@ -86,8 +86,9 @@ class AcountMovetImporter(models.TransientModel):
                 importer.input_move,
                 ftype.replace('.', '')
             )
-            action_obj = self.env['ir.actions.act_window']
             action_id = self.env.ref('account.action_move_journal_line')
-            res = action_obj.read(action_id.id)
-            res['domain'] = res['domain'][:-1] + ",('id', 'in', %s)]" % sid
+            res = action_id.read()[0]
+            res['domain'] = res['domain'] or []
+            res['domain'] = res['domain'][:-1] + \
+                [('id', 'in', [o.id for o in sid])]
             return res
