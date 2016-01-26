@@ -34,33 +34,17 @@ from openerp.exceptions import except_orm
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
-    def _get_import_type_selection(self):
-        """This is the method to be inherited for adding the imprt type"""
-        return [('move_line', 'Move lines')]
-
-    def __get_import_type_selection(self):
-        """ Call method which can be inherited """
-        return self._get_import_type_selection()
-
-    def _get_import_parser_selection(self):
-        """This is the method to be inherited for adding the parser"""
-        return [('generic_csvxls', 'Generic csv xls')]
-
-    def __get_import_parser_selection(self):
-        """ Call method which can be inherited """
-        return self._get_import_parser_selection()
-
     import_ok = fields.Boolean(
             'Used for import',
             help="Check to use this journal to import account move")
     import_type = fields.Selection(
-            __get_import_type_selection,
+            [('move_line', 'Move lines')],
             'Import type',
             required=False,
             help="Choose here which import type you want to import "
                  "account mouve.")
     import_parser = fields.Selection(
-            __get_import_parser_selection,
+            [('generic_csvxls', 'Generic csv xls')],
             'Import parser',
             required=False,
             help="Choose here which parser you want to import "
