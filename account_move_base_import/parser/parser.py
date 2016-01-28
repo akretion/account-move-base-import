@@ -222,7 +222,6 @@ def new_account_move_parser(journal, *args, **kwargs):
     :param journal: browse_record of import journal.
     :return: class instance for given journal import parser.
     """
-
     for cls in itersubclasses(AccountMoveImportParser):
         if cls.parser_for(journal.import_parser):
             return cls(journal, *args, **kwargs)
