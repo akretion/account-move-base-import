@@ -12,7 +12,8 @@ from openerp.addons.account_move_base_import.parser.file_parser \
     import FileParser
 from csv import Dialect
 from _csv import QUOTE_MINIMAL, register_dialect
-
+from openerp import fields, _
+from openerp.exceptions import except_orm
 
 def float_or_zero(val):
     """ Conversion function used to manage
@@ -23,7 +24,7 @@ def float_or_zero(val):
 
 
 def format_date(val):
-    return datetime.datetime.strptime(val, "%Y%m%d")
+    return datetime.datetime.strptime(val, "%Y%m%d").strftime('%Y-%m-%d')
 
 
 class mercanet_dialect(Dialect):
@@ -45,7 +46,7 @@ class MercanetFileParser(FileParser):
     def __init__(self, parse_name, ftype='csv', **kwargs):
         conversion_dict = {
             "OPERATION_DATE": format_date,
-            "PAYMENT_DATE": ustr,
+            "PAYMENT_DATE": format_date,
             "TRANSACTION_ID": ustr,
             "OPERATION_NAME": ustr,
             "OPERATION_AMOUNT": float_or_zero,
@@ -106,7 +107,7 @@ class MercanetFileParser(FileParser):
         """
         return {
             'ref': line.get('TRANSACTION_ID', '/'),
-            'name': line.get('PAYMENT_DATE', fields.Date.today()) +
+            'name': line.get('PAYMENT_DATE', fields.Date.today()) + ' - ' +
             line.get('TRANSACTION_ID', ''),
             'date': line.get('OPERATION_DATE', fields.Date.today()),
             'transaction_ref': line.get('TRANSACTION_ID', '/'),
@@ -131,10 +132,10 @@ class MercanetFileParser(FileParser):
             rows.append(row)
             if row['OPERATION_NAME'] == 'CREDIT_CAPTURE':
                 row["OPERATION_AMOUNT"] = - row["OPERATION_AMOUNT"]
-                self.refund_amount -= row["OPERATION_AMOUNT"]
+                self.refund_amount += row["OPERATION_AMOUNT"]
                 row["debit"] = row["OPERATION_AMOUNT"]
             elif row['OPERATION_NAME'] == 'DEBIT_CAPTURE':
-                self.transfer_amount -= row["OPERATION_AMOUNT"]
+                self.transfer_amount += row["OPERATION_AMOUNT"]
                 row["credit"] = row["OPERATION_AMOUNT"]
             else:
                 raise except_orm(
@@ -145,3 +146,62 @@ class MercanetFileParser(FileParser):
                     )
         self.result_row_list = rows
         return res
+
+    def add_extra_move_lines(self, move_store, journal, move):
+        """
+        Add all extra move by using defaut partner
+        account of the journal.
+
+        """
+        move_line_obj = move.env['account.move.line']
+
+        account_deb_id = journal.default_debit_account_id.id
+        account_cred_id = journal.default_credit_account_id.id
+        import pdb; pdb.set_trace()
+        if self.transfer_amount > 0.0:
+            if not account_deb_id:
+                raise except_orm(
+                    _('Invalid data'),
+                    _("There is no default credit or debit"
+                      "account for the journal %s.") % (journal.name)
+                    )
+            transaction_ref = _('Mercanet Transfer - %s') % \
+                (fields.Date.today(),)
+            transfer_mv = {
+                    'ref': '/',
+                    'name': transaction_ref,
+                    'transaction_ref': transaction_ref,
+                    'date': fields.Date.today(),
+                    'move_id': move.id,
+                    'journal_id': journal.id,
+                }
+            transfer_mv = move_line_obj._add_missing_default_values(
+                    transfer_mv)
+            transfer_mv['account_id'] = account_deb_id
+            transfer_mv['debit'] = self.transfer_amount
+            move_store.append(transfer_mv)
+
+        if self.refund_amount > 0.0:
+            if not account_cred_id:
+                raise except_orm(
+                    _('Invalid data'),
+                    _("There is no default credit or debit"
+                      "account for the journal %s.") % (journal.name)
+                    )
+            transaction_ref = _('Mercanet Refund - %s') % \
+                (fields.Date.today(),)
+            refund_mv = {
+                    'ref': '/',
+                    'name': transaction_ref,
+                    'transaction_ref': transaction_ref,
+                    'date': fields.Date.today(),
+                    'move_id': move.id,
+                    'journal_id': journal.id,
+                }
+            refund_mv = move_line_obj._add_missing_default_values(
+                    refund_mv)
+            refund_mv['account_id'] = account_cred_id
+            refund_mv['credit'] = self.refund_amount
+            move_store.append(refund_mv)
+
+        return move_store

@@ -41,7 +41,7 @@ class AccountJournal(models.Model):
 
     def _get_import_parser_selection(self):
         """This is the method to be inherited for adding the parser"""
-        return [('generic_csvxls', 'Generic csv xls')]
+        return [('generic_csvxls', 'Generic Csv/Xls')]
 
     import_ok = fields.Boolean(
             'Used for import',
@@ -135,21 +135,6 @@ class AccountMove(models.Model):
             res.append(move)
         return res
 
-    def add_extra_move_lines(self, parser, move_store, journal, move):
-        """
-        This is the method to be inherited for adding extra move
-            lines to move_store.
-
-        :param parser: the parser used to import file
-        :param move_store : list of dict of parsed move line values
-        :param journal: browse_record of the journal used
-            to import the file
-        :param move: browse_record of the move used to import move lines
-        :return: dict of vals that will be passed to create method of
-          move line
-        """
-        return move_store
-
     def _move_import(self, journal, parser, file_stream, ftype="csv"):
         """Create a account move with the given journal and parser. It will
         fullfill the account move with the values of the file providen, but
@@ -189,8 +174,8 @@ class AccountMove(models.Model):
                     parser_vals, move, journal)
                 move_store.append(values)
             # TODO add method to wirite extra line : ex countrpart move line
-            move_store = self.add_extra_move_lines(
-                parser, move_store, journal, move)
+            move_store = parser.add_extra_move_lines(
+                move_store, journal, move)
             # Hack to bypass ORM poor perfomance....
             move_line_obj._insert_lines(move_store)
             attachment_data = {
