@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+   <record id="account_journal_remittance_view_form" model="ir.ui.view">
+         <field name="model">account.journal</field>
+         <field name="inherit_id"
+            ref="account_move_base_import.account_journal_view_form" />
+         <field eval="20" name="priority"/>
+         <field name="arch" type="xml">
+            <field name="import_balance_check"
+                position="after">
+                    <field name="account_commision_id" />
+                    <field name='account_partner_id' attrs="{'required':
+                                    [('import_type', '=', 'remittance')]}"/>/>
+             </field>
+         </field>
+     </record>
+
+</data>
+</openerp>
+
