@@ -1,14 +1,16 @@
-Import basic account move
-=============================
+Auto completion of account move
+===============================
 
-This module allows you to import acount move CSV/xls files in Odoo.
-Sample file format are available in data folder.
+This module to auto complete the imported acount move from remittance in Odoo.
+Autocompletion are base on transaction id to find corresponding invoice
+(partner).
 
 Installation
 ============
 
-This module depends on the module *account* which
+This module depends on the module *base_transaction_id* which is available in :
 
+    https://github.com/OCA/bank-statement-reconcile/
 
 Configuration
 =============

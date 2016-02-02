@@ -16,7 +16,7 @@
                 'base_transaction_id',
     ],
     'data': [
-        'account_view.xml',
+        'views/account_view.xml',
     ],
     'installable': True,
 }

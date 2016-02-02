@@ -5,15 +5,16 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+from csv import Dialect
+from _csv import QUOTE_MINIMAL, register_dialect
+
 from openerp.tools import ustr
 from openerp import fields, _
 from openerp.exceptions import except_orm
+
 from openerp.addons.account_move_base_import.parser.file_parser \
     import FileParser
-from csv import Dialect
-from _csv import QUOTE_MINIMAL, register_dialect
-from openerp import fields, _
-from openerp.exceptions import except_orm
+
 
 def float_or_zero(val):
     """ Conversion function used to manage
@@ -157,7 +158,6 @@ class MercanetFileParser(FileParser):
 
         account_deb_id = journal.default_debit_account_id.id
         account_cred_id = journal.default_credit_account_id.id
-        import pdb; pdb.set_trace()
         if self.transfer_amount > 0.0:
             if not account_deb_id:
                 raise except_orm(
