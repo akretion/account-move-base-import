@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 
-
-from . import account
+from . import models
 from . import parser
 from . import wizard

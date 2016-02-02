@@ -1,13 +1,16 @@
-Import basic account move
-=============================
+Import Mercanet remittance to account move
+===========================================
 
-This module allows you to import acount move CSV/xls files in Odoo.
+This module allows you to import Mercanet remittance to acount move in Odoo.
 Sample file format are available in data folder.
 
 Installation
 ============
 
-This module depends on the module *account* which
+This module depends on the modules *account_move_base_import*,
+*'account_move_base_import_remittance'* which are available in thos repository
+and *base_transaction_id* which is available in :
+    https://github.com/OCA/bank-statement-reconcile/
 
 
 Configuration
@@ -30,3 +33,5 @@ Maintainer
 .. image:: http://odoo-community.org/logo.png
    :alt: Odoo Community Association
    :target: http://odoo-community.org
+
+

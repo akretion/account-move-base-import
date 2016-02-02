@@ -5,16 +5,17 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'Base Import account move',
-    'version': '0.1',
+    'name': 'Base Import move auto completion',
+    'version': '8.0.0.1',
     'license': 'AGPL-3',
     'author': 'Akretion',
     'website': 'http://www.akretion.com',
-    'summary': 'Base Import account move CSV/xls files in Odoo',
-    'depends': ['account'],
-    'external_dependencies': {'python': ['xlrd']},
+    'summary': 'Base Import move auto completion based on transactionID',
+    'depends': [
+                'account_move_base_import',
+                'base_transaction_id',
+    ],
     'data': [
-        'wizard/import_move_view.xml',
         'views/account_view.xml',
     ],
     'installable': True,

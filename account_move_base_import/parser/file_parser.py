@@ -204,3 +204,17 @@ class FileParser(AccountMoveImportParser):
         func = getattr(self, '_from_%s' % self.ftype)
         res = func(self.result_row_list, self.conversion_dict)
         return res
+
+    def add_extra_move_lines(self, move_store, journal, move):
+        """
+        This is the method to be inherited for adding extra move
+            lines to move_store.
+
+        :param move_store : list of dict of parsed move line values
+        :param journal: browse_record of the journal used
+            to import the file
+        :param move: browse_record of the move used to import move lines
+        :return: dict of vals that will be passed to create method of
+          move line
+        """
+        return move_store

@@ -13,7 +13,7 @@ class AccountJournal(models.Model):
     def _get_import_type_selection(self):
         """Add Mercanet type"""
         res = super(AccountJournal, self)._get_import_type_selection()
-        return res + [('Mercanet', 'Mercanet')]
+        return res + [('mercanet', 'Mercanet')]
 
     def _get_import_parser_selection(self):
         """Add Csv Mercanet Transaction """

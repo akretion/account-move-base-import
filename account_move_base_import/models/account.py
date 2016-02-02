@@ -1,35 +1,22 @@
-# -*- encoding: utf-8 -*-
-##############################################################################
-#
-#    account_move_base_import module for Odoo
-#    Copyright (C) 2014-2016 Akretion (http://www.akretion.com)
-#    @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
-#    @author Sébastien BEAU <sebastien.beau@akretion.com>
-#    some code are refactoing form account_statement_base_completion and
-#    account_statement_base_import of Camptocamp SA and ported to v8.
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
+# -*- coding: utf-8 -*-
+# © 2014-2016 Akretion (http://www.akretion.com)
+#   @author Mourad EL HADJ MIMOUNE <mourad.elhadj.mimoune@akretion.com>
+#   @author Sébastien BEAU <sebastien.beau@akretion.com>
+# © 2011-2016 Camptocamp SA (code adapted form statement import/completion)
+#   @authors Nicolas Bessi, Joel Grand-Guillaume
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
 import sys
 import traceback
 import datetime
-from openerp import fields, models, _
-from .parser import new_account_move_parser
-from openerp.tools.config import config
 import psycopg2
 import simplejson
+
+from openerp import fields, models, _
+from openerp.tools.config import config
 from openerp.exceptions import except_orm
+
+from ..parser import new_account_move_parser
 
 
 class AccountJournal(models.Model):
@@ -187,14 +174,6 @@ class AccountMove(models.Model):
                 'res_id': move,
             }
             attachment_obj.create(attachment_data)
-            # déplacer dans le module base completion
-            # # If user ask to launch completion at end of import, do it!
-            # if journal.launch_import_completion:
-            #     move_obj.button_auto_completion([move_id])
-            # Write the needed log infos on profile
-            # self.write_logs_after_import(journal.id,
-            #                              move_id,
-            #                              len(result_row_list))
         except Exception:
             error_type, error_value, trbk = sys.exc_info()
             st = "Error: %s\nDescription: %s\nTraceback:" % (
