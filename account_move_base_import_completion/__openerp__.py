@@ -5,15 +5,14 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'Base Import Mercanet in account move',
-    'version': '0.1',
+    'name': 'Base Import move auto completion',
+    'version': '8.0.0.1',
     'license': 'AGPL-3',
     'author': 'Akretion',
     'website': 'http://www.akretion.com',
-    'summary': 'Base Import Mercanet to account move from CSV files',
+    'summary': 'Base Import move auto completion based on transactionID',
     'depends': [
                 'account_move_base_import',
-                'account_move_base_import_remittance',
                 'base_transaction_id',
     ],
     'data': [
