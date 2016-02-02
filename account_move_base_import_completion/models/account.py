@@ -47,6 +47,7 @@ class AccountJournal(models.Model):
         selection="_get_functions",
         string='Auto completion Method',
         help="Choose methode used in auto completion")
+    auto_completion = fields.Boolean(string='Auto completion',)
 
     def _find_invoice(self, mv_line, inv_type):
         """Find invoice related to move line"""
@@ -153,9 +154,9 @@ class AccountMove(models.Model):
     _inherit = "account.move"
 
     completion_logs = fields.Text('Completion Log', readonly=True)
-    import_ok = fields.Boolean(string='Imported',
-                               related='journal_id.import_ok',
-                               store=True,)
+    auto_completion = fields.Boolean(
+        string='Auto completion', related='journal_id.auto_completion',
+        store=True,)
 
     def write_completion_log(self, move, error_msg, number_imported):
         """Write the log in the completion_logs field of the account move to
@@ -192,7 +193,7 @@ class AccountMove(models.Model):
             'create', raise_exception=True)
         for move in self:
             journal = move.journal_id
-            if journal.import_ok:
+            if journal.auto_completion:
                 msg_lines = []
                 line_ids = tuple((x.id for x in move.line_id))
                 res = False
@@ -232,7 +233,7 @@ class AccountMove(models.Model):
                 msg = u'\n'.join(msg_lines)
                 self.write_completion_log(move, msg, compl_lines)
             else:
-                msg = u' Journal of this move is not used for import '
+                msg = u" Journal of this move don't allow auto completion "
                 compl_lines = 0
                 self.write_completion_log(move, msg, compl_lines)
         return True
@@ -240,21 +241,26 @@ class AccountMove(models.Model):
     @api.multi
     def button_validate(self):
         """
+        Prevent validation of account move if it need auto completion
+        annd somme move line are not already completed
         """
         line_obj = self.env['account.move.line']
-        for move in self:
-            if move.journal_id.import_ok:
-                line_not_already_completed = line_obj.search(
-                    [
-                        ('move_id', '=', move.id),
-                        ('already_completed', '=', False),
-                    ],
-                    )
-                if line_not_already_completed:
-                    raise except_orm(
-                        _('User error'),
-                        _('You should tick Auto-Completed to true for '
-                            'all move line of the move %s') % move.name)
+        line_not_already_completed = line_obj.search(
+            [
+                ('move_id', 'in', self.ids),
+                ('move_id.auto_completion', '=', True),
+                ('already_completed', '=', False),
+            ],
+            )
+        if line_not_already_completed:
+            mv_name = ["%s(ID %s)" % (l.move_id.name, l.move_id.id) for l in
+                       line_not_already_completed]
+            mv_name = list(set(mv_name))
+            msg = u', '.join(mv_name)
+            raise except_orm(
+                _('User error'),
+                _('You should tick Auto-Completed to true for '
+                    'all move line of the moves : %s') % msg)
         return super(AccountMove, self).button_validate()
 
 

@@ -8,18 +8,16 @@
    <record id="view_account_journal_form" model="ir.ui.view">
          <field name="model">account.journal</field>
          <field name="inherit_id"
-            ref="account_move_base_import.view_account_journal_form" />
+            ref="account_move_base_import_remittance.view_account_journal_form"/>
          <field eval="20" name="priority"/>
          <field name="arch" type="xml">
-            <field name="import_balance_check"
-                position="after">
-                    <field name="account_commision_id" />
-                    <field name='account_partner_id' attrs="{'required':
-                                    [('import_type', '=', 'remittance')]}"/>/>
+            <field name="account_partner_id"
+                position="attributes">
+                   <field name="attrs">
+                    {'required': [('import_type', '=', 'remittance')]}</field>
              </field>
          </field>
      </record>
-
 </data>
 </openerp>
 
