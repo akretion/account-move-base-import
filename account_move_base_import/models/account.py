@@ -98,7 +98,7 @@ class AccountMove(models.Model):
         the journal.
         """
         vals = {'journal_id': journal.id}
-        vals = {'imported': True}
+        vals.update({'imported': True})
         vals.update(parser.get_mv_vals())
         return vals
 
