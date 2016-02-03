@@ -100,7 +100,7 @@ class TransactionIDFileParser(FileParser):
         account of the journal.
 
         """
-        move_line_obj = self.env['account.move.line']
+        move_line_obj = move.env['account.move.line']
 
         account_deb_id = journal.default_debit_account_id.id
         account_cred_id = journal.default_credit_account_id.id

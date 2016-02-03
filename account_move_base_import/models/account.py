@@ -53,6 +53,8 @@ class AccountJournal(models.Model):
 class AccountMove(models.Model):
     _inherit = "account.move"
 
+    imported = fields.Boolean(string='Imported')
+
     def prepare_move_lines_vals(self, parser_vals, move, journal):
         """Hook to build the values of a line from the parser returned values.
         At least it fullfill the move_id. Overide it to add your own
@@ -96,6 +98,7 @@ class AccountMove(models.Model):
         the journal.
         """
         vals = {'journal_id': journal.id}
+        vals.update({'imported': True})
         vals.update(parser.get_mv_vals())
         return vals
 

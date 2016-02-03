@@ -14,6 +14,7 @@
             <field name="import_balance_check"
                 position="after">
                     <field name="function_to_call" />
+                    <field name="auto_completion" />
              </field>
          </field>
      </record>
@@ -26,14 +27,14 @@
          <field name="arch" type="xml">
             <field name="journal_id"
                 position="after">
-                    <field name="import_ok" />
+                    <field name="auto_completion" />
              </field>
              <button name="button_validate" position="after">
                  <button name="button_auto_completion"
                     string="Auto Completion"
                     type="object"
                     attrs="{'invisible':
-                        ['|', ('import_ok', '=', False),
+                        ['|', ('auto_completion', '=', False),
                         ('state', '=', 'posted') ]}"
                     class="oe_highlight" icon="gtk-execute"/>
              </button>
