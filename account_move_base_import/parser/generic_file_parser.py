@@ -47,6 +47,7 @@ class GenericFileParser(FileParser):
             parse_name, ftype=ftype,
             extra_fields=conversion_dict,
             **kwargs)
+        self.group_key = 'move_ref'
 
     @classmethod
     def parser_for(cls, parser_name):
@@ -54,6 +55,20 @@ class GenericFileParser(FileParser):
         the providen name is generic_csvxls
         """
         return parser_name == 'generic_csvxls'
+
+    def get_mv_vals(self):
+        """This method return a dict of vals that ca be passed to create an
+        account move.
+        :return: dict of vals that represent additional infos for the move
+        """
+        res = super(GenericFileParser, self).get_mv_vals()
+        name_for_csv = '/'
+        if self.group_key:
+            name_for_csv = self.result_row_list[0][self.group_key]
+            res.update({'name': name_for_csv})
+            return res
+        else:
+            return res
 
     def get_mv_line_vals(self, line, *args, **kwargs):
         """

@@ -81,6 +81,11 @@ class TestMoveLineImport(TransactionCase):
             mids,
             'Move line not imported from  %s.' % mvl_file_path
         )
+        self.assertEquals(
+            len(mids),
+            2,
+            'Number off Moves imported is not correct'
+            )
         move_record = mids[0]
         lines = sorted(move_record.line_id, key=lambda x: x.id)
         line1 = lines[0] if lines else False
@@ -109,5 +114,5 @@ class TestMoveLineImport(TransactionCase):
             move_record.state, 'posted',
             'Account move must be posted')
         self.assertEquals(
-            move_record.amount, 268.5,
+            move_record.amount, 118.5,
             "Total amount error for account move")

@@ -35,6 +35,8 @@ except:
 def float_or_zero(val):
     """ Conversion function used to manage
     empty string into float usecase"""
+    if isinstance(val, float):
+        return val
     return float(val.replace(',', '.')) if val else 0.0
 
 
@@ -86,8 +88,7 @@ class FileParser(AccountMoveImportParser):
             res = self._parse_csv()
         else:
             res = self._parse_xls()
-        self.result_row_list = res
-        return True
+        return res
 
     def _validate(self, *args, **kwargs):
         """We check that all the key of the given file (means header) are
@@ -117,7 +118,21 @@ class FileParser(AccountMoveImportParser):
         with open(csv_file.name, 'rU') as fobj:
             reader = UnicodeDictReader(fobj, fieldnames=self.fieldnames,
                                        dialect=self.dialect)
-            return list(reader)
+            # if group key exit create one move by group key
+            if not self.group_key:
+                yield list(reader)
+            else:
+                data = []
+                current_ref = None
+                for line in reader:
+                    if current_ref is not None\
+                            and line[self.group_key] != current_ref:
+                        yield data
+                        data = [line]
+                    else:
+                        data.append(line)
+                    current_ref = line[self.group_key]
+                yield data
 
     def _parse_xls(self):
         """:return: dict of dict from xls/xlsx file (line/rows)"""
