@@ -189,6 +189,8 @@ class AccountMove(models.Model):
                 raise
             raise except_orm(_("move import error"),
                              _("The move cannot be created: %s") % st)
+        # clear the cash to reload corectely move (lines are created by sql)
+        self.env.clear()
         return move
 
 
