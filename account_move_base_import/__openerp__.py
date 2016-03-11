@@ -14,6 +14,7 @@
     'depends': ['account'],
     'external_dependencies': {'python': ['xlrd']},
     'data': [
+        'security/ir.model.access.csv',
         'wizard/import_move_view.xml',
         'views/account_view.xml',
     ],
