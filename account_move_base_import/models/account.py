@@ -118,11 +118,11 @@ class AccountMove(models.Model):
                 _("You must provide a valid acount journal to import an "
                   "account move!"))
         parser = new_account_move_parser(journal, ftype=ftype)
-        res = []
+        res = self.env['account.move'].browse([False])
         for result_rowjournal_obj_list in parser.parse(file_stream):
             move = self._move_import(
                 journal, parser, file_stream, ftype=ftype)
-            res.append(move)
+            res |= move
         return res
 
     def _move_import(self, journal, parser, file_stream, ftype="csv"):
