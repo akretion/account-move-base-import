@@ -15,9 +15,9 @@
                 position="after">
                 <field name="journal_id"
                     attrs="{'required':
-                        [('file_type', '=','import_move')],
+                        [('file_type', '=','imp_mv_ext_loc')],
                         'invisible':
-                        [('file_type', '!=','import_move')],
+                        [('file_type', '!=','imp_mv_ext_loc')],
                         }"/>
              </xpath>
          </field>
