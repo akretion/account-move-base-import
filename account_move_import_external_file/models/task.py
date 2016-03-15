@@ -17,20 +17,20 @@ class Task(models.Model):
     def _get_file_type(self):
         """Add import move """
         res = super(Task, self)._get_file_type()
-        return res + [('import_move', 'Import move')]
+        return res + [('imp_mv_ext_loc', 'Import move from external location')]
 
     @api.multi
     def run(self):
-        self.ensure_one()
         res = super(Task, self).run()
-        # for tsk in self:
-        for file_imp in self.attachment_ids:
-            ftype = self.env['account.move.import']._check_extension(
-                file_imp.datas_fname)
-            sid = self.env['account.move'].multi_move_import(
-                self.journal_id,
-                file_imp.datas,
-                ftype.replace('.', '')
-                )
-            sid.write({'task_id': self.id})
+        for tsk in self:
+            if tsk.file_type == 'imp_mv_ext_loc':
+                for file_imp in tsk.attachment_ids:
+                    ftype = self.env['account.move.import']._check_extension(
+                        file_imp.datas_fname)
+                    sid = self.env['account.move'].multi_move_import(
+                        tsk.journal_id,
+                        file_imp.datas,
+                        ftype.replace('.', '')
+                        )
+                    sid.write({'task_id': tsk.id})
         return res
