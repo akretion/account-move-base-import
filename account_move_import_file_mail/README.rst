@@ -8,7 +8,7 @@ Installation
 ============
 
 This module depends on the modules * 'account_move_base_import' and 
-        'file_mail'
+        'file_email'
 
 
 Configuration

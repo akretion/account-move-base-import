@@ -13,7 +13,7 @@
     'summary': 'Import Move automaticly from mail',
     'depends': [
         'account_move_base_import',
-        'file_mail',
+        'file_email',
         ],
     'data': [
         'views/fetchmail_view.xml',
