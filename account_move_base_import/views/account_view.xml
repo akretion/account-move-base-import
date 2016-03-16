@@ -8,7 +8,7 @@
    <record id="view_account_journal_form" model="ir.ui.view">
          <field name="model">account.journal</field>
          <field name="inherit_id" ref="account.view_account_journal_form" />
-         <field eval="20" name="priority"/>
+         <field eval="16" name="priority"/>
          <field name="arch" type="xml">
             <xpath expr="//page[last()]"
                 position="after">
@@ -36,12 +36,15 @@
          <field name="model">account.move</field>
          <field name="inherit_id"
             ref="account.view_move_form" />
-         <field eval="20" name="priority"/>
+         <field eval="16" name="priority"/>
          <field name="arch" type="xml">
-            <field name="journal_id"
-                position="after">
-                    <field name="imported" readonly="True"/>
-             </field>
+            <xpath expr="//page[last()]" position="after">
+                <page name="import_info" string="Import information">
+                    <group cols="4">
+                    <field name="imported" readonly="True" colspan="4"/>
+                </group> 
+              </page>
+            </xpath>
 
          </field>
      </record>

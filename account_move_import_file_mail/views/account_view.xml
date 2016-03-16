@@ -12,12 +12,14 @@
             ref="account_move_base_import.view_move_form" />
          <field eval="22" name="priority"/>
          <field name="arch" type="xml">
-            <field name="imported"
+            <xpath expr="//field[@name='imported']/.."
                 position="after">
+                <group string="Import from email">
+                    <field name="fetchmail_attachment_condition_id"
+                    readonly="True"/>
                     <field name="fetchmail_server_id" readonly="True"/>
-                    <field name="fetchmail_attachment_condition_id" readonly="True"/>
-             </field>
-
+                </group>
+             </xpath>
          </field>
      </record>
 

@@ -12,12 +12,13 @@
             ref="account_move_base_import.view_move_form" />
          <field eval="22" name="priority"/>
          <field name="arch" type="xml">
-            <field name="imported"
+            <xpath expr="//field[@name='imported']/.."
                 position="after">
+                <group string="Import from external location">
                     <field name="task_id" readonly="True"/>
                     <field name="location_id" readonly="True"/>
-             </field>
-
+                </group>
+             </xpath>
          </field>
      </record>
 

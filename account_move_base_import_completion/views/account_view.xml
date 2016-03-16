@@ -38,11 +38,11 @@
                         ('state', '=', 'posted') ]}"
                     class="oe_highlight" icon="gtk-execute"/>
              </button>
-            <xpath expr="//page[last()]" position="after">
+            <page name="import_info" position="after">
                 <page name="logs" string="Completion logs">
                     <field name="completion_logs" nolabel="True"/>
                 </page>
-            </xpath>
+            </page>
             <xpath
                 expr="//page/field[@name='line_id']/tree/field[@name='credit']"
                 position="after">
