@@ -19,11 +19,12 @@ class IrAttachmentMetadata(models.Model):
         mail_file = super(
          IrAttachmentMetadata, self
             ).message_new(msg, custom_values)
-        if mail_file and mail_file.file_type == 'imp_mv_mail':
+        if mail_file and\
+           mail_file.fetchmail_attachment_condition_id.type == 'imp_mv_mail':
             ftype = self.env['account.move.import']._check_extension(
                     mail_file.datas_fname)
             sid = self.env['account.move'].multi_move_import(
-                mail_file.journal_id,
+                mail_file.fetchmail_attachment_condition_id.journal_id,
                 mail_file.datas,
                 ftype.replace('.', '')
                 )

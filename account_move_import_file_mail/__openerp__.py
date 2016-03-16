@@ -5,7 +5,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'Move Import from external files',
+    'name': 'Move Import from email',
     'version': '0.1',
     'license': 'AGPL-3',
     'author': 'Akretion',
