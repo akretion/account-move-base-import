@@ -12,4 +12,4 @@ class IrAttachmentMetadata(models.Model):
     def _get_file_type(self):
         """Add import move """
         res = super(IrAttachmentMetadata, self)._get_file_type()
-        return res + [('import_move', 'Import move')]
+        return res + [('imp_mv_ext_loc', 'Import move (ext loc)')]
