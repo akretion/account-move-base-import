@@ -1,7 +1,0 @@
-move_ref;name;ref;date;account_id;debit;credit
-invoice no 1;move line a;50969286;2016-01-12;411100;118.5;0
-invoice no 1;move line b;51065326;2016-01-12;707100;0;98,75
-invoice no 1;move line c;51179306;2016-01-12;445711;0;19,75
-invoice no 2;move line d;60969275;2016-01-19;411100;150;0
-invoice no 2;move line e;61065368;2016-01-19;707100;0;125
-invoice no 2;move line f;61179302;2016-01-19;445711;0;25

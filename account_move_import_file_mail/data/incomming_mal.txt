@@ -1,0 +1,97 @@
+X-Apparently-To: mourad.elhadj.mimoune@imap_akretion.com; Wed, 16 Mar 2016 09:33:32 +0000
+Return-Path: <test_test@akmail.com>
+Received-SPF: pass (domain of akmail.com designates 74.125.82.47 as permitted sender)
+X-YMailISG: UBIJmXIWLDspH_sOsBJCCmGXD.BF7nB3rwixnFhTxU2GMrGi
+ wkFJrNx0BdqzwzQk__kr9Z.rehUkvfHMTgDVFB1BPTIPpSru6OT6xeW7eub8
+ DWEX6tpE6VBsd7b1FMDdc9mp5Jyl6Ma.bMjGPh4SWTmollLF_sHcinLeCvep
+ XY50nbqoEbbkpWsgPC9fqZXMLavPqrVkkUREzCkZNi3LmS2zs.gKV1rM5i82
+ E622ZaQ31.1KsYGbo1g4RMPHI956mxbw8yI7oFX3lo32IUn7OyAyrAm7v8aj
+ 8gCkrmgN_QK9zHFeEg9Y8eaX9Y8mTDKO9zomVx58BAmbCm2wxP8ArrjhPKEW
+ 7TYtPD5q6rfxUV4quX.9tXWdvX8aT3ur36QK1vOCWx8UywRIOmt86TL1mMBx
+ fTHrOgolGY9Uc7b1rJ36CqmwrmaynXmvCiozLuToU06DcRtKHS0kz9uLiKkT
+ Md7S52udbpDZ3R84kUa5bvKq.jzaFU10yJqibv8Jkw1nLKpGM9YTjW8Jjefy
+ rzL765bfIW4QArZ5esz7LLCwi8C.vTA2MJUqXoioPBDI6UqQ4mOjvbsqYb.n
+ jFj8.zc5sQS_G9UsxC2X2Z.u4mCgT.W3DzoMqjeruTBeRofVRnCd7TLuBMH_
+ 9GyZZsqQGxikpg4ZrvDm.UDlfLlry3hAN_9LhH5t8faxaPsdTiS0gNO4QjHx
+ DP05qNCSREg7rXTVkkQbZ.Mt7xyqYhPn4WlvVXKM99APGE6sEdWdke6.e.kp
+ nbbeymaZccUo5kDzaWicyqOM1GiNDyNCvfiL9MS1Iph7uyhZetFZIUXaIlNi
+ tmstPd2hoyLSLJZv6RleROxk0kq6PInRYr71RbEhQkOmWRXui1QlWAF9gIka
+ h4YH6ip0HOBtG3NqDW5bnuFiJiaJ4SfGC2XglPk9720_1GnSbSp9Bdl.tg8c
+ Pb82KbC529GJCZSMM6UF40Samf2uf5fKSMuRhxPVnrVUi2cXzy4vCim4lLUd
+ NBjQ9MLhYycXClAfz8ZjFG8REXBbYyePuQGI1bddI34jKTe5EngfM4wtJB2I
+ tsqDL4gEF1Qsqpd7ijnRPPI9jODq75lF76zhyQb9lcsEyl5UCyTunNu8KYdc
+ 9ntbrMcCB2mCXIncJ_5jnqDCdbEUtPiyjl1eMIerJ0vyDiX4AeaRyoJuSHPn
+ qdtQ5xkhiQLQXBIRqjHEC.vEK9uu6MNVw1PxKwPS0Q6iTjRTT9qDQgh2a0uu
+ O6C_m.x0HyLQ8cnshuiycPdJM9YDK7cuCttMGK6VqNWxHTgVRbPvmJhZlNOv
+ DSy_yLl5bQKSb2eNww.YX6BBEh85ATR6aYyZZ_HcJjJJZHMB4opi3bhzUuPb
+ OpzlQy9ZgpqXjDJk4wCpS4kzKcUNbZpORyaUncz.zGH6yqQcr3hg_ujkVUte
+ z3kO7nw5YykmGWFLob2V6xpL75fHBd86
+X-Originating-IP: [74.125.82.47]
+Authentication-Results: mta1005.mail.ir2.imap_akretion.com  from=akmail.com; domainkeys=neutral (no sig);  from=akmail.com; dkim=pass (ok)
+Received: from 127.0.0.1  (EHLO mail-wm0-f47.google.com) (74.125.82.47)
+  by mta1005.mail.ir2.imap_akretion.com with SMTPS; Wed, 16 Mar 2016 09:33:32 +0000
+Received: by mail-wm0-f47.google.com with SMTP id p65so180651828wmp.1
+        for <mourad.elhadj.mimoune@imap_akretion.com>; Wed, 16 Mar 2016 02:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=akmail.com; s=20120113;
+        h=mime-version:date:message-id:subject:from:to;
+        bh=Rt59dfkYRDqM5eZb3aO5u/4M1wn+e3iWJPhX7lvaQTI=;
+        b=vwaFWUWNB/QKq8m76Xk5EoECblVoMxbyxW6xk77a04b6nzwpwUbgXQAxlCcGQoVelk
+         tQoZt9ACopW5ycvumXzMEwbSjAtxLl+NuYji4UFB6ooXN7VDFnQMa1mG6SUTQUpcusML
+         770Gp7jIvQWo/oVX1n5jeIMlO9C6SDjzX4wjcmTg1llKuiVIyFF2ebn/9fruSRDwTBuq
+         xZhmjFgbVfYZpsINlSGFFWkyo8X3D+P3uKY6QcrUZacpx+l1igDonb72SEFzLcRdnruW
+         fFEckjfYhwA0eSoxEVpza+EEU6lgYKi9Z/rO3mpAG8ff3KWKvr1Y5WReVzoU7TNhnGvJ
+         r0pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Rt59dfkYRDqM5eZb3aO5u/4M1wn+e3iWJPhX7lvaQTI=;
+        b=QWAe6RQ/hJKc1tPmaOAp9oqWjRAXP304NbdeP5+ipwDo24d0Kl5BGDUJHL0alywaTe
+         rWY0gheeIS7BzQEdnELvfU+smAXd8IDSBxCcE0YzZOWoTYhbczO+69JfJQ4FYqMhZWuU
+         eVdGlj/jUhhm6ZUPNCSIQ9xMPPQ4SJ81Jbyn1QV1GU/xUBU5DmFeLy6n1dNHDwMVlaEp
+         FiE2um8MvXWOKQIe7JgqYT6M8CF/XKv51sH9f0jYWa+BLLmqIc6HiuejJ1/YICaEdlBr
+         EA8elA/XqhUERG9N+1KaQFuBcCPbAzcL0P1fzE0vHel9OF41PUiQQaidBwWuRLNJdbWr
+         cvGw==
+X-Gm-Message-State: AD7BkJKMbExTmxTaKHicBrsSEdsXP4X1DFqyKXgzugtEGq5BHzWBEIhLzrroPUMUP/DqfyU/7wQuf03rnU0wxQ==
+MIME-Version: 1.0
+X-Received: by 10.28.91.142 with SMTP id p136mr3315604wmb.76.1458120812655;
+ Wed, 16 Mar 2016 02:33:32 -0700 (PDT)
+Received: by 10.28.171.134 with HTTP; Wed, 16 Mar 2016 02:33:32 -0700 (PDT)
+Date: Wed, 16 Mar 2016 10:33:32 +0100
+Message-ID: <CABjdPh0G3d=EB9mMidC+L8amyEOOF4XzYdJTYnfv3F03bqJcxQ@mail.akmail.com>
+Subject: Import move
+From: Mourad EL HADJ MIMMOUNE <test_test@akmail.com>
+To: mourad.elhadj.mimoune@akretion.com
+Content-Type: multipart/mixed; boundary=001a11444a7e1415b1052e273586
+Content-Length: 1105
+
+--001a11444a7e1415b1052e273586
+Content-Type: multipart/alternative; boundary=001a11444a7e1415ad052e273584
+
+--001a11444a7e1415ad052e273584
+Content-Type: text/plain; charset=UTF-8
+
+
+
+--001a11444a7e1415ad052e273584
+Content-Type: text/html; charset=UTF-8
+
+<div dir="ltr"><br></div>
+
+--001a11444a7e1415ad052e273584--
+--001a11444a7e1415b1052e273586
+Content-Type: text/csv; charset=US-ASCII; name="test_imp_test_imp_move_line.csv"
+Content-Disposition: attachment; filename="test_imp_move_line.csv"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ilungpoh0
+
+bW92ZV9yZWY7bmFtZTtyZWY7ZGF0ZTthY2NvdW50X2lkO2RlYml0O2NyZWRpdAppbnZvaWNlIG5v
+IDE7bW92ZSBsaW5lIGE7NTA5NjkyODY7MjAxNi0wMS0xMjs0MTExMDA7MTE4LjU7MAppbnZvaWNl
+IG5vIDE7bW92ZSBsaW5lIGI7NTEwNjUzMjY7MjAxNi0wMS0xMjs3MDcxMDA7MDs5OCw3NQppbnZv
+aWNlIG5vIDE7bW92ZSBsaW5lIGM7NTExNzkzMDY7MjAxNi0wMS0xMjs0NDU3MTE7MDsxOSw3NQpp
+bnZvaWNlIG5vIDI7bW92ZSBsaW5lIGQ7NjA5NjkyNzU7MjAxNi0wMS0xOTs0MTExMDA7MTUwOzAK
+aW52b2ljZSBubyAyO21vdmUgbGluZSBlOzYxMDY1MzY4OzIwMTYtMDEtMTk7NzA3MTAwOzA7MTI1
+Cmludm9pY2Ugbm8gMjttb3ZlIGxpbmUgZjs2MTE3OTMwMjsyMDE2LTAxLTE5OzQ0NTcxMTswOzI1
+Cg==
+--001a11444a7e1415b1052e273586--
+
