@@ -5,17 +5,18 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'Base Import account move',
+    'name': 'Move Import from external files',
     'version': '0.1',
     'license': 'AGPL-3',
     'author': 'Akretion',
     'website': 'http://www.akretion.com',
-    'summary': 'Base Import account move CSV/xls files in Odoo',
-    'depends': ['account'],
-    'external_dependencies': {'python': ['xlrd']},
+    'summary': 'Import Move automaticly from external file location',
+    'depends': [
+        'account_move_base_import',
+        'external_file_location',
+        ],
     'data': [
-        'security/ir.model.access.csv',
-        'wizard/import_move_view.xml',
+        'views/task_view.xml',
         'views/account_view.xml',
     ],
     'installable': True,
